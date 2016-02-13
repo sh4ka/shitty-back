@@ -41,16 +41,20 @@ class NewsRepository extends \Doctrine\ORM\EntityRepository
             ->createQuery(
                 'SELECT n FROM AppBundle:News n WHERE n.dateShown = :today '
             )
-            ->setParameter('today', $date)
+            ->setParameter('today', $date->format('Y-m-d'))
             ->getResult();
-        if(count($news) == 0){
-            $news = $this->getEntityManager()
+        $gotNews = count($news);
+        if(count($news) < 15){
+            $freshNews = $this->getEntityManager()
                 ->createQuery(
                     'SELECT n FROM AppBundle:News n WHERE n.dateShown is null'
                 )
-                ->getResult();
-            shuffle($news);
-            $news = array_slice($news,0,15);
+                ->setMaxResults(15-$gotNews);
+            if(!empty($freshNews)){
+                $freshNews = $freshNews->getResult();
+                shuffle($freshNews);
+                $news = array_merge($news, $freshNews);
+            }
         }
         return $news;
     }

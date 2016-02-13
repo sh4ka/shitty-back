@@ -18,13 +18,13 @@ class DefaultController extends Controller
         $serializer = $this->container->get('jms_serializer');
         $em = $this->getDoctrine()->getManager();
         $newsForToday = $em->getRepository('AppBundle:News')->findForToday();
-        if(empty($newsForToday[0]->getDateShown())){
-            foreach($newsForToday as $new){
+        foreach($newsForToday as $new){
+            if(is_null($new->getDateShown())){
                 $new->setDateShown(new \DateTime());
                 $em->persist($new);
             }
-            $em->flush();
         }
+        $em->flush();
         $response = new Response($serializer->serialize($newsForToday, 'json'));
         $response->headers->set('Content-Type', 'application/json');
         return $response;
