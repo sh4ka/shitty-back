@@ -56,6 +56,7 @@ class NewsRepository extends \Doctrine\ORM\EntityRepository
                 $news = array_merge($news, $freshNews);
             }
         }
-        return shuffle($news);
+        shuffle($news);
+        return $news;
     }
 }
