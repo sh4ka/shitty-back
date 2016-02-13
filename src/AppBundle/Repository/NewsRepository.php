@@ -49,10 +49,11 @@ class NewsRepository extends \Doctrine\ORM\EntityRepository
             $freshNews = $this->getEntityManager()
                 ->createQuery(
                     'SELECT n FROM AppBundle:News n WHERE n.dateShown is null'
-                )
-                ->setMaxResults(15-$gotNews);
+                );
             if(!empty($freshNews)){
                 $freshNews = $freshNews->getResult();
+                shuffle($freshNews);
+                $freshNews = array_slice($freshNews, 0, 15-$gotNews);
                 $news = array_merge($news, $freshNews);
             }
         }
