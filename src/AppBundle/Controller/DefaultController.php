@@ -18,7 +18,7 @@ class DefaultController extends Controller
         $serializer = $this->container->get('jms_serializer');
         $em = $this->getDoctrine()->getManager();
         $newsForToday = $em->getRepository('AppBundle:News')->findForToday();
-        if($newsForToday[0]->getDateShown() == null){
+        if(empty($newsForToday[0]->getDateShown())){
             foreach($newsForToday as $new){
                 $new->setDateShown(new \DateTime());
                 $em->persist($new);
