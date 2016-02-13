@@ -42,6 +42,7 @@ class NewsRepository extends \Doctrine\ORM\EntityRepository
                 'SELECT n FROM AppBundle:News n WHERE n.dateShown = :today '
             )
             ->setParameter('today', $date->format('Y-m-d'))
+            ->setMaxResults(15)
             ->getResult();
         $gotNews = count($news);
         if(count($news) < 15){
@@ -52,10 +53,9 @@ class NewsRepository extends \Doctrine\ORM\EntityRepository
                 ->setMaxResults(15-$gotNews);
             if(!empty($freshNews)){
                 $freshNews = $freshNews->getResult();
-                shuffle($freshNews);
                 $news = array_merge($news, $freshNews);
             }
         }
-        return $news;
+        return shuffle($news);
     }
 }
