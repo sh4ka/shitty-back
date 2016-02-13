@@ -89,7 +89,7 @@ class News
      * @var string
      * @Exclude
      *
-     * @ORM\Column(name="date_show", type="date", nullable=true)
+     * @ORM\Column(name="date_shown", type="date", nullable=true)
      */
     private $dateShown;
 
