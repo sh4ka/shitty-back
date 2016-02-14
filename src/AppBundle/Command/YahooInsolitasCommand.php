@@ -27,7 +27,7 @@ class YahooInsolitasCommand extends ContainerAwareCommand
             $existingNews = $em->getRepository('AppBundle:News')->findAllUrlsBySite('yahoo-insolitas');
             // run over content
             foreach ($xml->channel->item as $newsItem) {
-                if(!array_search($newsItem->link, $existingNews)){
+                if(array_search($newsItem->link, $existingNews) === false){
                     $newsEntry = new News();
                     $newsEntry->setSite('yahoo-insolitas');
                     $newsEntry->setTitle($newsItem->title);
