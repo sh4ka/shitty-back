@@ -43,7 +43,7 @@ class News
      * @var string
      * @Exclude
      *
-     * @ORM\Column(name="description", type="string", length=255, nullable=true)
+     * @ORM\Column(name="description", type="string", length=1200, nullable=true)
      */
     private $description;
 
