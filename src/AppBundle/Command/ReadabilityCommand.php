@@ -29,7 +29,7 @@ class ReadabilityCommand extends ContainerAwareCommand
 
         foreach($existingNews as $unprocessedNew){
             // make call to api
-            $response = $client->get('?url='.$unprocessedNew->getUrl().'&token='.$token);
+            $response = $client->get('?url='.urlencode($unprocessedNew->getUrl()).'&token='.$token);
 
             if($response->getStatusCode() == 200){
                 $data = json_decode($response->getBody(), true);
