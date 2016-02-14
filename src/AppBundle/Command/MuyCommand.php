@@ -27,7 +27,7 @@ class MuyCommand extends ContainerAwareCommand
             $existingNews = $em->getRepository('AppBundle:News')->findAllUrlsBySite('muy');
             // run over content
             foreach ($xml->channel->item as $newsItem) {
-                if(array_search($newsItem->link, $existingNews) === false){
+                if(array_search(['url' => $newsItem->link], $existingNews) === false){
                     $newsEntry = new News();
                     $newsEntry->setSite('muy');
                     $newsEntry->setTitle($newsItem->title);
