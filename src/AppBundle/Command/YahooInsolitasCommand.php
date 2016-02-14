@@ -20,8 +20,7 @@ class YahooInsolitasCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $baseUrl = "https://es.noticias.yahoo.com/rss/insolitas";
-        $content = file_get_contents($baseUrl);
-        $xml = simplexml_load_string($content);
+        $xml = simplexml_load_file($baseUrl);
         if ($xml) {
             $em = $this->getContainer()->get('doctrine')->getManager();
             $existingNews = $em->getRepository('AppBundle:News')->findAllUrlsBySite('yahoo-insolitas');
