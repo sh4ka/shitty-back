@@ -28,7 +28,7 @@ class NewsRepository extends \Doctrine\ORM\EntityRepository
     {
         return $this->getEntityManager()
             ->createQuery(
-                'SELECT n FROM AppBundle:News n WHERE n.content is null'
+                'SELECT n FROM AppBundle:News n WHERE n.content is null and n.leadImageUrl is NULL'
             )
             ->getResult();
     }

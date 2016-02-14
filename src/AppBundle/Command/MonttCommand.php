@@ -33,6 +33,10 @@ class MonttCommand extends ContainerAwareCommand
                     $newsEntry->setUrl($newsItem->link);
                     $newsEntry->setDescription(strip_tags($newsItem->description));
                     $newsEntry->setDateAdded(new \DateTime());
+                    $namespaces = $newsItem->getNamespaces(true);
+                    $media = $newsItem->children($namespaces['media']);
+                    $thumbnail = $media->thumbnail;
+                    $newsEntry->setLeadImageUrl($thumbnail);
                     $em->persist($newsEntry);
                 }
             }
