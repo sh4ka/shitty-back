@@ -42,10 +42,10 @@ class NewsRepository extends \Doctrine\ORM\EntityRepository
                 'SELECT n FROM AppBundle:News n WHERE n.dateShown = :today AND n.leadImageUrl is not NULL '
             )
             ->setParameter('today', $date->format('Y-m-d'))
-            ->setMaxResults(15)
+            ->setMaxResults(16)
             ->getResult();
         $gotNews = count($news);
-        if(count($news) < 15){
+        if(count($news) < 16){
             $freshNews = $this->getEntityManager()
                 ->createQuery(
                     'SELECT n FROM AppBundle:News n WHERE n.dateShown is null AND n.leadImageUrl is not NULL'
@@ -53,7 +53,7 @@ class NewsRepository extends \Doctrine\ORM\EntityRepository
             if(!empty($freshNews)){
                 $freshNews = $freshNews->getResult();
                 shuffle($freshNews);
-                $freshNews = array_slice($freshNews, 0, 15-$gotNews);
+                $freshNews = array_slice($freshNews, 0, 16-$gotNews);
                 $news = array_merge($news, $freshNews);
             }
         }
