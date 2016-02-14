@@ -19,7 +19,7 @@ class MonttCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $baseUrl = "http://feeds.feedburner.com/montt?format=xml";
+        $baseUrl = "http://feeds.feedburner.com/montt";
         $xml = simplexml_load_file($baseUrl);
         if ($xml) {
             $em = $this->getContainer()->get('doctrine')->getManager();
@@ -33,10 +33,13 @@ class MonttCommand extends ContainerAwareCommand
                     $newsEntry->setUrl($newsItem->link);
                     $newsEntry->setDescription(strip_tags($newsItem->description));
                     $newsEntry->setDateAdded(new \DateTime());
-                    $namespaces = $newsItem->getNamespaces(true);
-                    $media = $newsItem->children($namespaces['media']);
-                    $thumbnail = $media->thumbnail;
-                    $newsEntry->setLeadImageUrl($thumbnail);
+                    if ($media = $newsItem->children('media', TRUE)) {
+                        if ($media->thumbnail) {
+                            $attributes = $media->thumbnail->attributes();
+                            $imgsrc     = (string)$attributes['url'];
+                            $newsEntry->setLeadImageUrl($imgsrc);
+                        }
+                    }
                     $em->persist($newsEntry);
                 }
             }
