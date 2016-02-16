@@ -8,27 +8,27 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class MuyCommand extends ContainerAwareCommand
+class MicrosiervosCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
         $this
-            ->setName('muy:scrape')
-            ->setDescription('Scrape muy');
+            ->setName('microsiervos:scrape')
+            ->setDescription('Scrape microsiervos');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $baseUrl = "http://feeds.feedburner.com/Muyinteresantees?format=xml";
+        $baseUrl = "http://www.microsiervos.com/index.xml";
         $xml = simplexml_load_file($baseUrl);
         if ($xml) {
             $em = $this->getContainer()->get('doctrine')->getManager();
-            $existingNews = $em->getRepository('AppBundle:News')->findAllUrlsBySite('muy');
+            $existingNews = $em->getRepository('AppBundle:News')->findAllUrlsBySite('microsiervos');
             // run over content
             foreach ($xml->channel->item as $newsItem) {
                 if(array_search(['url' => $newsItem->link], $existingNews) === false){
                     $newsEntry = new News();
-                    $newsEntry->setSite('muy');
+                    $newsEntry->setSite('microsiervos');
                     $newsEntry->setTitle($newsItem->title);
                     $newsEntry->setUrl($newsItem->link);
                     $newsEntry->setDateAdded(new \DateTime());

@@ -20,8 +20,7 @@ class QuoCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $baseUrl = "http://www.quo.es/rss/feed/site";
-        $content = file_get_contents($baseUrl);
-        $xml = simplexml_load_string($content);
+        $xml = simplexml_load_file($baseUrl);
         if ($xml) {
             $em = $this->getContainer()->get('doctrine')->getManager();
             $existingNews = $em->getRepository('AppBundle:News')->findAllUrlsBySite('quo');
@@ -32,7 +31,6 @@ class QuoCommand extends ContainerAwareCommand
                     $newsEntry->setSite('quo');
                     $newsEntry->setTitle($newsItem->title);
                     $newsEntry->setUrl($newsItem->link);
-                    $newsEntry->setDescription(strip_tags($newsItem->description));
                     $newsEntry->setDateAdded(new \DateTime());
                     $em->persist($newsEntry);
                 }

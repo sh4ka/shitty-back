@@ -23,16 +23,14 @@ class YahooInsolitasCommand extends ContainerAwareCommand
         $xml = simplexml_load_file($baseUrl);
         if ($xml) {
             $em = $this->getContainer()->get('doctrine')->getManager();
-            $existingNews = $em->getRepository('AppBundle:News')->findAllUrlsBySite('yahoo-insolitas');
+            $existingNews = $em->getRepository('AppBundle:News')->findAllUrlsBySite('yahoo');
             // run over content
             foreach ($xml->channel->item as $newsItem) {
                 if(array_search(['url' => $newsItem->link], $existingNews) === false){
                     $newsEntry = new News();
-                    $newsEntry->setSite('yahoo-insolitas');
+                    $newsEntry->setSite('yahoo');
                     $newsEntry->setTitle($newsItem->title);
                     $newsEntry->setUrl($newsItem->link);
-                    $description = strip_tags($newsItem->description);
-                    $newsEntry->setDescription($description);
                     $newsEntry->setDateAdded(new \DateTime());
                     $em->persist($newsEntry);
                 }

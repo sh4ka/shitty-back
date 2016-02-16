@@ -8,27 +8,27 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class MuyCommand extends ContainerAwareCommand
+class XatakaCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
         $this
-            ->setName('muy:scrape')
-            ->setDescription('Scrape muy');
+            ->setName('xataka:scrape')
+            ->setDescription('Scrape xataka');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $baseUrl = "http://feeds.feedburner.com/Muyinteresantees?format=xml";
+        $baseUrl = "http://feeds.weblogssl.com/xataka2";
         $xml = simplexml_load_file($baseUrl);
         if ($xml) {
             $em = $this->getContainer()->get('doctrine')->getManager();
-            $existingNews = $em->getRepository('AppBundle:News')->findAllUrlsBySite('muy');
+            $existingNews = $em->getRepository('AppBundle:News')->findAllUrlsBySite('xataka');
             // run over content
             foreach ($xml->channel->item as $newsItem) {
                 if(array_search(['url' => $newsItem->link], $existingNews) === false){
                     $newsEntry = new News();
-                    $newsEntry->setSite('muy');
+                    $newsEntry->setSite('xataka');
                     $newsEntry->setTitle($newsItem->title);
                     $newsEntry->setUrl($newsItem->link);
                     $newsEntry->setDateAdded(new \DateTime());
