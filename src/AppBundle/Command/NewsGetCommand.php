@@ -47,6 +47,17 @@ class NewsGetCommand extends Command
             }
         }
 
+        $output->writeln('Parsing readability');
+        $command = $this->getApplication()->find('readability:process');
+        $arguments = array(
+
+        );
+        $input = new ArrayInput($arguments);
+        $returnCode = $command->run($input, $output);
+        if($returnCode == 0) {
+            $output->writeln('Readability successfully executed');
+        }
+
         $output->writeln('All commands done.');
     }
 }
