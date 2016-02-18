@@ -32,10 +32,10 @@ class ReadabilityCommand extends ContainerAwareCommand
             $response = $client->get('?url='.urlencode($unprocessedNew->getUrl()).'&token='.$token);
 
             if($response->getStatusCode() == 200){
+                $data = json_decode($response->getBody(), true);
                 if(empty($data['content'])){
                     $em->remove($unprocessedNew);
                 } else {
-                    $data = json_decode($response->getBody(), true);
                     $unprocessedNew->setContent($data['content']);
                     $unprocessedNew->setLeadImageUrl($data['lead_image_url']);
                     $em->persist($unprocessedNew);
