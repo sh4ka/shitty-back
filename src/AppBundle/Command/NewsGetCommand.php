@@ -35,6 +35,7 @@ class NewsGetCommand extends Command
             , 'muy:scrape'
             , 'quo:scrape'
             , 'xataka:scrape'
+            , 'fogonazos:scrape'
         ];
 
         $output->writeln('Running commands to get news');
