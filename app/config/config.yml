@@ -99,3 +99,4 @@ nelmio_cors:
 easy_admin:
     entities:
         - AppBundle\Entity\News
+        - AppBundle\Entity\Source

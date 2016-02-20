@@ -9,13 +9,14 @@
 namespace AppBundle\Command;
 
 
-use Symfony\Component\Console\Command\Command;
+use AppBundle\Entity\News;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class NewsGetCommand extends Command
+class NewsGetCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
@@ -28,26 +29,29 @@ class NewsGetCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
-        $io->title('Fetching news from commands.');
-        $commandsToRun = [
-            'microsiervos:scrape'
-            , 'montt:scrape'
-            , 'muy:scrape'
-            , 'quo:scrape'
-            , 'xataka:scrape'
-            , 'fogonazos:scrape'
-        ];
+        $io->title('Fetching news from configured sources');
 
-        $output->writeln('Running commands to get news');
-        foreach($commandsToRun as $commandLiteral) {
-            $command = $this->getApplication()->find($commandLiteral);
-            $arguments = array(
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        $sources = $em->getRepository('AppBundle:Source')->findBy(['enabled' => true]);
 
-            );
-            $input = new ArrayInput($arguments);
-            $returnCode = $command->run($input, $output);
-            if($returnCode == 0) {
-                $output->writeln($commandLiteral.' successfully executed');
+        foreach($sources as $newsSource) {
+            $xml = simplexml_load_file($newsSource->getUrl());
+            if ($xml) {
+                $existingNews = $em->getRepository('AppBundle:News')->findAllUrlsBySite($newsSource->getName());
+                // run over content
+                foreach ($xml->channel->item as $newsItem) {
+                    $io->comment('Found '.$newsItem->link);
+                    if(array_search(['url' => $newsItem->link], $existingNews) === false){
+                        $io->comment('Is a new item');
+                        $newsEntry = new News();
+                        $newsEntry->setSite($newsSource->getName());
+                        $newsEntry->setTitle($newsItem->title);
+                        $newsEntry->setUrl($newsItem->link);
+                        $newsEntry->setDateAdded(new \DateTime());
+                        $em->persist($newsEntry);
+                    }
+                }
+                $em->flush();
             }
         }
 
