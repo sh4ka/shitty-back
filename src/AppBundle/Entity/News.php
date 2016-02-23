@@ -94,7 +94,7 @@ class News
     private $dateShown;
 
     /**
-     * @var boolean
+     * @var bool
      * @Exclude
      *
      * @ORM\Column(name="enabled", type="boolean", nullable=true)
