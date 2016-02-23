@@ -39,7 +39,10 @@ class NewsRepository extends \Doctrine\ORM\EntityRepository
 
         $news = $this->getEntityManager()
             ->createQuery(
-                'SELECT n FROM AppBundle:News n WHERE n.dateShown = :today AND n.leadImageUrl is not NULL '
+                'SELECT n FROM AppBundle:News n WHERE
+n.dateShown = :today AND
+n.enabled = true AND
+ n.leadImageUrl is not NULL '
             )
             ->setParameter('today', $date->format('Y-m-d'))
             ->setMaxResults(16)
@@ -48,7 +51,10 @@ class NewsRepository extends \Doctrine\ORM\EntityRepository
         if(count($news) < 16){
             $freshNews = $this->getEntityManager()
                 ->createQuery(
-                    'SELECT n FROM AppBundle:News n WHERE n.dateShown is null AND n.leadImageUrl is not NULL'
+                    'SELECT n FROM AppBundle:News n WHERE
+n.dateShown is null AND
+n.enabled = true AND
+ n.leadImageUrl is not NULL'
                 );
             if(!empty($freshNews)){
                 $freshNews = $freshNews->getResult();
