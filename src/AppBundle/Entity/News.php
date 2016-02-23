@@ -18,12 +18,6 @@ class News
 {
 
     /**
-     * @Exclude
-     * @var int
-     */
-    var $excerptLength = 140;
-
-    /**
      * @var int
      *
      * @ORM\Column(name="id", type="integer")
@@ -95,11 +89,10 @@ class News
 
     /**
      * @var bool
-     * @Exclude
      *
      * @ORM\Column(name="enabled", type="boolean", nullable=true)
      */
-    private $enabled;
+    private $enabled = true;
 
     /**
      * Get id
@@ -257,13 +250,15 @@ class News
 
     /**
      * @param boolean $enabled
+     *
+     * @return Source
      */
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
+
+        return $this;
     }
-
-
 
 }
 

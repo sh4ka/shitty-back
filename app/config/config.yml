@@ -98,5 +98,9 @@ nelmio_cors:
 
 easy_admin:
     entities:
-        - AppBundle\Entity\News
-        - AppBundle\Entity\Source
+        News:
+            class: AppBundle\Entity\News
+            list:
+                fields: ['id', 'enabled', 'title']
+        Source:
+            class: AppBundle\Entity\Source
