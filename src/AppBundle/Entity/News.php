@@ -94,6 +94,14 @@ class News
     private $dateShown;
 
     /**
+     * @var boolean
+     * @Exclude
+     *
+     * @ORM\Column(name="enabled", type="boolean", nullable=true)
+     */
+    private $enabled;
+
+    /**
      * Get id
      *
      * @return int
