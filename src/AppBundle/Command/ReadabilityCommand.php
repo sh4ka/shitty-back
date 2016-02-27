@@ -33,7 +33,7 @@ class ReadabilityCommand extends ContainerAwareCommand
 
             if($response->getStatusCode() == 200){
                 $data = json_decode($response->getBody(), true);
-                if(empty($data['content'])){
+                if($this->isValidEntry($data)){
                     $em->remove($unprocessedNew);
                 } else {
                     $unprocessedNew->setContent($data['content']);
@@ -43,5 +43,16 @@ class ReadabilityCommand extends ContainerAwareCommand
             }
         }
         $em->flush();
+    }
+
+    protected function isValidEntry($data){
+        if(empty($data['content'])){
+            return false;
+        }
+        list($with, $height, $type, $attr) = getimagesize($data['lead_image_url']);
+        if($with * $height < 40000){
+            return false;
+        }
+        return true;
     }
 }
