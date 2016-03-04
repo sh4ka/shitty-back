@@ -33,19 +33,19 @@ class ReadabilityCommand extends ContainerAwareCommand
 
             if($response->getStatusCode() == 200){
                 $data = json_decode($response->getBody(), true);
-                if($this->isValidEntry($data)){
-                    $em->remove($unprocessedNew);
+                if(!$this->isValidImage($data) && $this->hasValidTitle($data)){
+                    $unprocessedNew->setEnabled(false);
                 } else {
                     $unprocessedNew->setContent($data['content']);
                     $unprocessedNew->setLeadImageUrl($data['lead_image_url']);
-                    $em->persist($unprocessedNew);
                 }
+                $em->persist($unprocessedNew);
             }
         }
         $em->flush();
     }
 
-    protected function isValidEntry($data){
+    protected function isValidImage($data){
         if(empty($data['content'])){
             return false;
         }
@@ -54,5 +54,18 @@ class ReadabilityCommand extends ContainerAwareCommand
             return false;
         }
         return true;
+    }
+
+    protected function hasValidTitle($data){
+        $bad = ['samsung', 'apple', 'google', 'microsoft', 'bq', 'sony', 'presenta', 'smartphone'];
+        if(empty($data['content'])){
+            return false;
+        }
+
+        $search = $data['title'];
+
+        $matches = array_filter($bad, function($var) use ($search) { return preg_match("/\b$search\b/i", $var); });
+
+        return count($matches)>0?false:true;
     }
 }
