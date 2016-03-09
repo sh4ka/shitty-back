@@ -29,9 +29,14 @@ class ReadabilityCommand extends ContainerAwareCommand
 
         foreach($existingNews as $unprocessedNew){
             // make call to api
-            $response = $client->get('?url='.urlencode($unprocessedNew->getUrl()).'&token='.$token);
+            $response = null;
+            try{
+                $response = $client->get('?url='.urlencode($unprocessedNew->getUrl()).'&token='.$token);
+            } catch (\Exception $e){
+                $output->writeln('Exception loading url '.$unprocessedNew->getUrl());
+            }
 
-            if($response->getStatusCode() == 200){
+            if(!is_null($response) && $response->getStatusCode() == 200){
                 $data = json_decode($response->getBody(), true);
                 if(!$this->isValidImage($data) && !$this->hasValidTitle($data)){
                     $unprocessedNew->setEnabled(false);
