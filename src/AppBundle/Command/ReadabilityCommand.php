@@ -43,7 +43,7 @@ class ReadabilityCommand extends ContainerAwareCommand
 
             if(!is_null($response) && $response->getStatusCode() == 200){
                 $data = json_decode($response->getBody(), true);
-                if(!$this->isValidImage($data) || !$this->hasValKidTitle($data)){
+                if(!$this->isValidImage($data) || !$this->hasValidTitle($data)){
                     $unprocessedNew->setEnabled(false);
                     $em->persist($unprocessedNew);
                     $em->flush();
