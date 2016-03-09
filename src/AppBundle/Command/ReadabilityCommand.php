@@ -34,20 +34,27 @@ class ReadabilityCommand extends ContainerAwareCommand
                 $response = $client->get('?url='.urlencode($unprocessedNew->getUrl()).'&token='.$token);
             } catch (\Exception $e){
                 $output->writeln('Exception loading url '.$unprocessedNew->getUrl());
+                $unprocessedNew->setEnabled(false);
+                $em->persist($unprocessedNew);
+                $em->flush();
+                continue;
             }
 
             if(!is_null($response) && $response->getStatusCode() == 200){
                 $data = json_decode($response->getBody(), true);
                 if(!$this->isValidImage($data) && !$this->hasValidTitle($data)){
                     $unprocessedNew->setEnabled(false);
+                    $em->persist($unprocessedNew);
+                    $em->flush();
                 } else {
                     $unprocessedNew->setContent($data['content']);
                     $unprocessedNew->setLeadImageUrl($data['lead_image_url']);
+                    $em->persist($unprocessedNew);
+                    $em->flush();
                 }
-                $em->persist($unprocessedNew);
             }
         }
-        $em->flush();
+
     }
 
     protected function isValidImage($data){
