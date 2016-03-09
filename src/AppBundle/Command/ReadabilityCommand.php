@@ -34,6 +34,7 @@ class ReadabilityCommand extends ContainerAwareCommand
                 $response = $client->get('?url='.urlencode($unprocessedNew->getUrl()).'&token='.$token);
             } catch (\Exception $e){
                 $output->writeln('Exception loading url '.$unprocessedNew->getUrl());
+                $output->writeln($e->getMessage());
                 $unprocessedNew->setEnabled(false);
                 $em->persist($unprocessedNew);
                 $em->flush();
@@ -42,7 +43,7 @@ class ReadabilityCommand extends ContainerAwareCommand
 
             if(!is_null($response) && $response->getStatusCode() == 200){
                 $data = json_decode($response->getBody(), true);
-                if(!$this->isValidImage($data) || !$this->hasValidTitle($data)){
+                if(!$this->isValidImage($data) || !$this->hasValKidTitle($data)){
                     $unprocessedNew->setEnabled(false);
                     $em->persist($unprocessedNew);
                     $em->flush();
