@@ -33,7 +33,7 @@ class ReadabilityCommand extends ContainerAwareCommand
 
             if($response->getStatusCode() == 200){
                 $data = json_decode($response->getBody(), true);
-                if(!$this->isValidImage($data) && $this->hasValidTitle($data)){
+                if(!$this->isValidImage($data) && !$this->hasValidTitle($data)){
                     $unprocessedNew->setEnabled(false);
                 } else {
                     $unprocessedNew->setContent($data['content']);
