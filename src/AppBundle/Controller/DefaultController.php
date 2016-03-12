@@ -13,7 +13,7 @@ class DefaultController extends Controller
     /**
      * @Route("/news", name="articles")
      */
-    public function indexAction()
+    public function newsAction()
     {
         $serializer = $this->container->get('jms_serializer');
         $em = $this->getDoctrine()->getManager();
@@ -28,5 +28,13 @@ class DefaultController extends Controller
         $response = new Response($serializer->serialize($newsForToday, 'json'));
         $response->headers->set('Content-Type', 'application/json');
         return $response;
+    }
+
+    /**
+     * @Route("/", name="home")
+     */
+    public function indexAction()
+    {
+        return $this->redirect('https://play.google.com/store/apps/details?id=floppolapps.shittytimes', 301);
     }
 }
