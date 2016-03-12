@@ -101,6 +101,6 @@ easy_admin:
         News:
             class: AppBundle\Entity\News
             list:
-                fields: ['id', 'enabled', 'title']
+                fields: ['id', 'enabled', 'title', 'leadImageUrl']
         Source:
             class: AppBundle\Entity\Source
