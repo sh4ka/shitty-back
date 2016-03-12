@@ -20,6 +20,7 @@ class AppKernel extends Kernel
             new EightPoints\Bundle\GuzzleBundle\GuzzleBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle(),
             new Nelmio\CorsBundle\NelmioCorsBundle(),
+            new FOS\UserBundle\FOSUserBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

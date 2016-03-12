@@ -30,7 +30,8 @@
         "javiereguiluz/easyadmin-bundle": "^1.11",
         "eightpoints/guzzle-bundle": "^4.4",
         "jms/serializer-bundle": "^1.1",
-        "nelmio/cors-bundle": "^1.4"
+        "nelmio/cors-bundle": "^1.4",
+        "friendsofsymfony/user-bundle": "~2.0@dev"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
