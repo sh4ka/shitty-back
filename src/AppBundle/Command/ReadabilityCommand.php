@@ -57,8 +57,9 @@ class ReadabilityCommand extends ContainerAwareCommand
     }
 
     protected function hasValidTitle($data){
-        $bad = ['samsung', 'apple', 'google', 'microsoft', 'bq', 'sony', 'presenta', 'smartphone',
-        'lg', 'huawei', 'cazando gangas', 'iphone', 'alcatel', 'motorola'
+        $bad = [
+            'samsung', 'apple', 'google', 'microsoft', 'bq', 'sony', 'presenta', 'smartphone',
+        'lg', 'huawei', 'cazando gangas', 'iphone', 'alcatel', 'motorola', 'android', 'ios'
         ];
         if(empty($data['content'])){
             return false;
