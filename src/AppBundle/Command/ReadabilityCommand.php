@@ -46,7 +46,7 @@ class ReadabilityCommand extends ContainerAwareCommand
     }
 
     protected function isValidImage($data){
-        if(empty($data['content'])){
+        if(empty($data['content']) || empty($data['lead_image_url'])){
             return false;
         }
         list($with, $height, $type, $attr) = getimagesize($data['lead_image_url']);
