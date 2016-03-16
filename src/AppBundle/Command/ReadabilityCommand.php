@@ -31,7 +31,7 @@ class ReadabilityCommand extends ContainerAwareCommand
             // make call to api
             $response = null;
             try{
-                $response = $client->get('?url='.urlencode($unprocessedNew->getUrl()).'&token='.$token);
+                $response = $client->get('?url='.$unprocessedNew->getUrl().'&token='.$token);
             } catch (\Exception $e){
                 $output->writeln('Exception loading url '.$unprocessedNew->getUrl());
                 $output->writeln($e->getMessage());
