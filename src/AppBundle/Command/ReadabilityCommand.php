@@ -59,7 +59,8 @@ class ReadabilityCommand extends ContainerAwareCommand
     }
 
     protected function isValidImage($data){
-        if(empty($data['content']) || empty($data['lead_image_url'])){
+        if(empty($data['content']) || empty($data['lead_image_url'])
+        || $data['lead_image_url'] == 'http://www.quo.es/var/quo/storage/images/auxiliar/right/app-quo/926526-2-esl-ES/app-quo_promocionado.png'){
             return false;
         }
         list($with, $height, $type, $attr) = getimagesize($data['lead_image_url']);
