@@ -15,16 +15,22 @@ class DefaultController extends Controller
      */
     public function newsAction()
     {
-        $serializer = $this->container->get('jms_serializer');
-        $em = $this->getDoctrine()->getManager();
-        $newsForToday = $em->getRepository('AppBundle:News')->findForToday();
-        foreach($newsForToday as $new){
-            if(is_null($new->getDateShown())){
-                $new->setDateShown(new \DateTime());
-                $em->persist($new);
+        $now = new \DateTime();
+        $today = $now->format('Y-m-d');
+        $newsCache = $this->container->get('news_cache');
+        if(!$newsForToday = $newsCache->fetch($today)){
+            $em = $this->getDoctrine()->getManager();
+            $newsForToday = $em->getRepository('AppBundle:News')->findForToday();
+            foreach($newsForToday as $new){
+                if(is_null($new->getDateShown())){
+                    $new->setDateShown(new \DateTime());
+                    $em->persist($new);
+                }
             }
+            $em->flush();
+            $newsCache->save($today, $newsForToday);
         }
-        $em->flush();
+        $serializer = $this->container->get('jms_serializer');
         $response = new Response($serializer->serialize($newsForToday, 'json'));
         $response->headers->set('Content-Type', 'application/json');
         return $response;

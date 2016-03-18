@@ -109,3 +109,13 @@ easy_admin:
                 fields: ['id', 'enabled', 'title', 'leadImageUrl']
         Source:
             class: AppBundle\Entity\Source
+
+doctrine_cache:
+    aliases:
+        news_cache: news_array_cache
+    providers:
+        news_array_cache:
+            type: array
+            namespace: news_array_cache_ns
+            aliases:
+                - news_cache
