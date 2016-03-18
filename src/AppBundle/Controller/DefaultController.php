@@ -29,6 +29,22 @@ class DefaultController extends Controller
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     }
+    /**
+     * @Route("/news/check", name="articles_check")
+     */
+    public function check()
+    {
+        $serializer = $this->container->get('jms_serializer');
+        $em = $this->getDoctrine()->getManager();
+        $newsForToday = $em->getRepository('AppBundle:News')->findForToday();
+        $data = [
+            'count' => count($newsForToday)
+        ];
+
+        $response = new Response($serializer->serialize($data, 'json'));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
 
     /**
      * @Route("/", name="home")

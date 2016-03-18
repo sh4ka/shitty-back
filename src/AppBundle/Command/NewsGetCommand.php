@@ -34,38 +34,40 @@ class NewsGetCommand extends ContainerAwareCommand
         $em = $this->getContainer()->get('doctrine')->getManager();
         $sources = $em->getRepository('AppBundle:Source')->findBy(['enabled' => true]);
 
-        foreach($sources as $newsSource) {
-            $xml = simplexml_load_file($newsSource->getUrl());
-            if ($xml) {
-                $existingNews = $em->getRepository('AppBundle:News')->findAllUrlsBySite($newsSource->getName());
-                // run over content
-                foreach ($xml->channel->item as $newsItem) {
-                    $io->comment('Found '.$newsItem->link);
-                    if(array_search(['url' => $newsItem->link], $existingNews) === false){
-                        $io->comment('Is a new item');
-                        $newsEntry = new News();
-                        $newsEntry->setSite($newsSource->getName());
-                        $newsEntry->setTitle($newsItem->title);
-                        $newsEntry->setUrl($newsItem->link);
-                        $newsEntry->setDateAdded(new \DateTime());
-                        $em->persist($newsEntry);
+        if(count($sources) == 0){
+            $io->warning('You have 0 configured sources');
+        } else{
+            foreach($sources as $newsSource) {
+                $xml = simplexml_load_file($newsSource->getUrl());
+                if ($xml) {
+                    $existingNews = $em->getRepository('AppBundle:News')->findAllUrlsBySite($newsSource->getName());
+                    // run over content
+                    foreach ($xml->channel->item as $newsItem) {
+                        $io->comment('Found '.$newsItem->link);
+                        if(array_search(['url' => $newsItem->link], $existingNews) === false){
+                            $io->comment('Is a new item');
+                            $newsEntry = new News();
+                            $newsEntry->setSite($newsSource->getName());
+                            $newsEntry->setTitle($newsItem->title);
+                            $newsEntry->setUrl($newsItem->link);
+                            $newsEntry->setDateAdded(new \DateTime());
+                            $em->persist($newsEntry);
+                        }
                     }
+                    $em->flush();
                 }
-                $em->flush();
+            }
+            $io->comment('Parsing readability');
+            $command = $this->getApplication()->find('readability:process');
+            $arguments = array(
+
+            );
+            $input = new ArrayInput($arguments);
+            $returnCode = $command->run($input, $output);
+            if($returnCode == 0) {
+                $io->comment('Readability successfully executed');
             }
         }
-
-        $output->writeln('Parsing readability');
-        $command = $this->getApplication()->find('readability:process');
-        $arguments = array(
-
-        );
-        $input = new ArrayInput($arguments);
-        $returnCode = $command->run($input, $output);
-        if($returnCode == 0) {
-            $output->writeln('Readability successfully executed');
-        }
-
-        $output->writeln('All commands done.');
+        $io->success('All commands done.');
     }
 }

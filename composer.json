@@ -76,7 +76,8 @@
                 "database_host": "SYMFONY__DATABASE_HOST",
                 "database_name": "SYMFONY__DATABASE_NAME",
                 "database_user": "SYMFONY__DATABASE_USER",
-                "database_password": "SYMFONY__DATABASE_PASSWORD"
+                "database_password": "SYMFONY__DATABASE_PASSWORD",
+                "readability_key": "READABILITY__API_KEY"
             }
         }
     }

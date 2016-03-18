@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ReadabilityCommand extends ContainerAwareCommand
 {
@@ -19,11 +20,13 @@ class ReadabilityCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $token = '4f9cf3693b36e0fe4c91bb3fca3eaa9236c926bd';
+        $token = $this->getContainer()->getParameter('readability_key');
 
         $em = $this->getContainer()->get('doctrine')->getManager();
         $existingNews = $em->getRepository('AppBundle:News')->findAllUnprocessed();
-        $output->writeln('Found '.count($existingNews).' unprocessed news.');
+        $io = new SymfonyStyle($input, $output);
+        $io->title('Parsing news from Redability');
+        $io->comment('Found '.count($existingNews).' unprocessed news.');
 
         $client   = $this->getContainer()->get('guzzle.client.api_readability');
 
@@ -33,17 +36,19 @@ class ReadabilityCommand extends ContainerAwareCommand
             try{
                 $response = $client->get('?url='.$unprocessedNew->getUrl().'&token='.$token);
             } catch (\Exception $e){
-                $output->writeln('Exception loading url '.$unprocessedNew->getUrl());
-                $output->writeln($e->getMessage());
+                $io->warning('Exception loading url '.$unprocessedNew->getUrl());
+                $io->warning($e->getMessage());
                 $unprocessedNew->setEnabled(false);
                 $em->persist($unprocessedNew);
                 $em->flush();
+                $io->warning('New has been disabled');
                 continue;
             }
 
             if(!is_null($response) && $response->getStatusCode() == 200){
                 $data = json_decode($response->getBody(), true);
                 if(!$this->isValidImage($data) || !$this->hasValidTitle($data)){
+                    $io->warning('New has invalid image or title, disabling');
                     $unprocessedNew->setEnabled(false);
                     $em->persist($unprocessedNew);
                     $em->flush();
@@ -52,10 +57,11 @@ class ReadabilityCommand extends ContainerAwareCommand
                     $unprocessedNew->setLeadImageUrl($data['lead_image_url']);
                     $em->persist($unprocessedNew);
                     $em->flush();
+                    $io->comment('Saving processed new');
                 }
             }
         }
-
+        $io->success('Readability completed');
     }
 
     protected function isValidImage($data){
